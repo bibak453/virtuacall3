@@ -1,0 +1,45 @@
+Common rules:
+each command is enclosed first with "(" and "º". This does not apply to the first and the last command.
+The "(" is used as a separator in some cases.
+The "" appears to act as a line breaker while writing character to screen.
+Text enclosed with "¢£" are probably used to tranform and display any form of text and also decrypt it. There are characters that aren't decrypted as they appear in the right form in the files.
+
+($±"Mes\V_OP02.mes"????
+
+"($±" is used to jump into another file
+Command is invoked 57 times across 14 files.
+
+( Í&"#92'=#92:#92=0"Í%"LOAD 0 IPF\OP_04.IPF"
+
+"Í&" is a command for loading an image into the game.
+It can probably load colors based on parameters. #TODO: Investigate
+
+(*¹
+This character set seems to always call to the engine like a function
+
+(*¹(a¢Ğse"%CD:\Voi2\OP01002.wav"(£º
+
+This command is used to to play a voice line.
+
+(*¹(¢sT2T2ƒIƒŒZ‘OW—_—l8Œ»xKZ7OIHt£&¹(¢slŠÔ“ñ\Î~‰ß:wTŒ¶’®8•·?4RCj2Z7IH?¶t£&¹(¢s>>OAŠ¨ˆá0ƒu›8©•ªZ?TLTŒë‰ğCKDoH?¶t£&º(º
+
+Here is a choice menu. Let's brake it down:
+
+(*¹
+We call to the engine
+
+(¢sT2T2ƒIƒŒZ‘OW—_—l8Œ»xKZ7OIHt£&¹
+First option
+#TODO: Learn what "&¹" is
+
+(¢slŠÔ“ñ\Î~‰ß:wTŒ¶’®8•·?4RCj2Z7IH?¶t£&¹
+Second option
+#TODO: Learn what "" is
+#TODO: Learn what "&¹" is
+
+(¢s>>OAŠ¨ˆá0ƒu›8©•ªZ?TLTŒë‰ğCKDoH?¶t£&º(º
+Third Option
+#TODO: Learn what "" is
+#TODO: Learn what "&" is
+
+Each option is always enclosed with "st" for aesthetic. 
