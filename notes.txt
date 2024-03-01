@@ -1,45 +1,45 @@
 Common rules:
-each command is enclosed first with "(" and "º". This does not apply to the first and the last command.
+each command is enclosed first with "(" and "ï¿½". This does not apply to the first and the last command.
 The "(" is used as a separator in some cases.
 The "" appears to act as a line breaker while writing character to screen.
-Text enclosed with "¢£" are probably used to tranform and display any form of text and also decrypt it. There are characters that aren't decrypted as they appear in the right form in the files.
+Text enclosed with "ï¿½ï¿½" are probably used to transform and display any form of text and also decrypt it. There are characters that aren't decrypted as they appear in the right form in the files.
 
-($±"Mes\V_OP02.mes"????
+($ï¿½"Mes\V_OP02.mes"????
 
-"($±" is used to jump into another file
+"($ï¿½" is used to jump into another file
 Command is invoked 57 times across 14 files.
 
-( Í&"#92'=#92:#92=0"Í%"LOAD 0 IPF\OP_04.IPF"
+( ï¿½&"#92'=#92:#92=0"ï¿½%"LOAD 0 IPF\OP_04.IPF"
 
-"Í&" is a command for loading an image into the game.
+"ï¿½&" is a command for loading an image into the game.
 It can probably load colors based on parameters. #TODO: Investigate
 
-(*¹
+(*ï¿½
 This character set seems to always call to the engine like a function
 
-(*¹(a¢Ğse"%CD:\Voi2\OP01002.wav"(£º
+(*ï¿½(aï¿½ï¿½se"%CD:\Voi2\OP01002.wav"(ï¿½ï¿½
 
 This command is used to to play a voice line.
 
-(*¹(¢sT2T2ƒIƒŒZ‘OW—_—l8Œ»xKZ7OIHt£&¹(¢slŠÔ“ñ\Î~‰ß:wTŒ¶’®8•·?4RCj2Z7IH?¶t£&¹(¢s>>OAŠ¨ˆá0ƒu›8©•ªZ?TLTŒë‰ğCKDoH?¶t£&º(º
+(*ï¿½(ï¿½ï¿½sT2T2ï¿½Iï¿½ï¿½Zï¿½OWï¿½ï¿½ï¿½_ï¿½l8ï¿½ï¿½xKZ7Oï¿½Iï¿½Hï¿½tï¿½&ï¿½(ï¿½ï¿½sï¿½lï¿½Ô“ï¿½\ï¿½ï¿½~ï¿½ï¿½:wTï¿½ï¿½ï¿½ï¿½8ï¿½ï¿½?4RCj2Z7ï¿½Iï¿½H?ï¿½ï¿½tï¿½&ï¿½(ï¿½ï¿½s>>Oï¿½Aï¿½ï¿½ï¿½ï¿½0ï¿½uï¿½ï¿½8ï¿½ï¿½ï¿½ï¿½Z?TLTï¿½ï¿½ï¿½CKDoï¿½H?ï¿½ï¿½tï¿½&ï¿½(ï¿½
 
 Here is a choice menu. Let's brake it down:
 
-(*¹
+(*ï¿½
 We call to the engine
 
-(¢sT2T2ƒIƒŒZ‘OW—_—l8Œ»xKZ7OIHt£&¹
+(ï¿½ï¿½sT2T2ï¿½Iï¿½ï¿½Zï¿½OWï¿½ï¿½ï¿½_ï¿½l8ï¿½ï¿½xKZ7Oï¿½Iï¿½Hï¿½tï¿½&ï¿½
 First option
-#TODO: Learn what "&¹" is
+#TODO: Learn what "&ï¿½" is
 
-(¢slŠÔ“ñ\Î~‰ß:wTŒ¶’®8•·?4RCj2Z7IH?¶t£&¹
+(ï¿½ï¿½sï¿½lï¿½Ô“ï¿½\ï¿½ï¿½~ï¿½ï¿½:wTï¿½ï¿½ï¿½ï¿½8ï¿½ï¿½?4RCj2Z7ï¿½Iï¿½H?ï¿½ï¿½tï¿½&ï¿½
 Second option
 #TODO: Learn what "" is
-#TODO: Learn what "&¹" is
+#TODO: Learn what "&ï¿½" is
 
-(¢s>>OAŠ¨ˆá0ƒu›8©•ªZ?TLTŒë‰ğCKDoH?¶t£&º(º
+(ï¿½ï¿½s>>Oï¿½Aï¿½ï¿½ï¿½ï¿½0ï¿½uï¿½ï¿½8ï¿½ï¿½ï¿½ï¿½Z?TLTï¿½ï¿½ï¿½CKDoï¿½H?ï¿½ï¿½tï¿½&ï¿½(ï¿½
 Third Option
 #TODO: Learn what "" is
 #TODO: Learn what "&" is
 
-Each option is always enclosed with "st" for aesthetic. 
+Each option is always enclosed with "ï¿½sï¿½t" for aesthetic.
