@@ -1,45 +1,50 @@
 Common rules:
-each command is enclosed first with "(" and "ï¿½". This does not apply to the first and the last command.
+each command is enclosed first with "(" and "?¿½". This does not apply to the first and the last command.
 The "(" is used as a separator in some cases.
 The "" appears to act as a line breaker while writing character to screen.
-Text enclosed with "ï¿½ï¿½" are probably used to transform and display any form of text and also decrypt it. There are characters that aren't decrypted as they appear in the right form in the files.
+Text enclosed with "?¿½?¿½" are probably used to transform and display any form of text and also decrypt it. There are characters that aren't decrypted as they appear in the right form in the files.
 
-($ï¿½"Mes\V_OP02.mes"????
+In text the parenthesis are expressed with ijtheese op
 
-"($ï¿½" is used to jump into another file
+dot : D
+quotes : gh
+
+($?¿½"Mes\V_OP02.mes"????
+
+"($?¿½" is used to jump into another file
 Command is invoked 57 times across 14 files.
 
-( ï¿½&"#92'=#92:#92=0"ï¿½%"LOAD 0 IPF\OP_04.IPF"
+( ?¿½&"#92'=#92:#92=0"?¿½%"LOAD 0 IPF\OP_04.IPF"
 
-"ï¿½&" is a command for loading an image into the game.
+"?¿½&" is a command for loading an image into the game.
 It can probably load colors based on parameters. #TODO: Investigate
 
-(*ï¿½
+(*?¿½
 This character set seems to always call to the engine like a function
 
-(*ï¿½(aï¿½ï¿½se"%CD:\Voi2\OP01002.wav"(ï¿½ï¿½
+(*?¿½(a?¿½?¿½se"%CD:\Voi2\OP01002.wav"(?¿½?¿½
 
 This command is used to to play a voice line.
 
-(*ï¿½(ï¿½ï¿½sT2T2ï¿½Iï¿½ï¿½Zï¿½OWï¿½ï¿½ï¿½_ï¿½l8ï¿½ï¿½xKZ7Oï¿½Iï¿½Hï¿½tï¿½&ï¿½(ï¿½ï¿½sï¿½lï¿½Ô“ï¿½\ï¿½ï¿½~ï¿½ï¿½:wTï¿½ï¿½ï¿½ï¿½8ï¿½ï¿½?4RCj2Z7ï¿½Iï¿½H?ï¿½ï¿½tï¿½&ï¿½(ï¿½ï¿½s>>Oï¿½Aï¿½ï¿½ï¿½ï¿½0ï¿½uï¿½ï¿½8ï¿½ï¿½ï¿½ï¿½Z?TLTï¿½ï¿½ï¿½CKDoï¿½H?ï¿½ï¿½tï¿½&ï¿½(ï¿½
+(*?¿½(?¿½?¿½sT2T2?¿½I?¿½?¿½Z?¿½OW?¿½?¿½?¿½_?¿½l8?¿½?¿½xKZ7O?¿½I?¿½H?¿½t?¿½&?¿½(?¿½?¿½s?¿½l?¿½Ô“ï¿½\?¿½?¿½~?¿½?¿½:wT?¿½?¿½?¿½?¿½8?¿½?¿½?4RCj2Z7?¿½I?¿½H??¿½?¿½t?¿½&?¿½(?¿½?¿½s>>O?¿½A?¿½?¿½?¿½?¿½0?¿½u?¿½?¿½8?¿½?¿½?¿½?¿½Z?TLT?¿½?¿½?¿½CKDo?¿½H??¿½?¿½t?¿½&?¿½(?¿½
 
 Here is a choice menu. Let's brake it down:
 
-(*ï¿½
+(*?¿½
 We call to the engine
 
-(ï¿½ï¿½sT2T2ï¿½Iï¿½ï¿½Zï¿½OWï¿½ï¿½ï¿½_ï¿½l8ï¿½ï¿½xKZ7Oï¿½Iï¿½Hï¿½tï¿½&ï¿½
+(?¿½?¿½sT2T2?¿½I?¿½?¿½Z?¿½OW?¿½?¿½?¿½_?¿½l8?¿½?¿½xKZ7O?¿½I?¿½H?¿½t?¿½&?¿½
 First option
-#TODO: Learn what "&ï¿½" is
+#TODO: Learn what "&?¿½" is
 
-(ï¿½ï¿½sï¿½lï¿½Ô“ï¿½\ï¿½ï¿½~ï¿½ï¿½:wTï¿½ï¿½ï¿½ï¿½8ï¿½ï¿½?4RCj2Z7ï¿½Iï¿½H?ï¿½ï¿½tï¿½&ï¿½
+(?¿½?¿½s?¿½l?¿½Ô“ï¿½\?¿½?¿½~?¿½?¿½:wT?¿½?¿½?¿½?¿½8?¿½?¿½?4RCj2Z7?¿½I?¿½H??¿½?¿½t?¿½&?¿½
 Second option
 #TODO: Learn what "" is
-#TODO: Learn what "&ï¿½" is
+#TODO: Learn what "&?¿½" is
 
-(ï¿½ï¿½s>>Oï¿½Aï¿½ï¿½ï¿½ï¿½0ï¿½uï¿½ï¿½8ï¿½ï¿½ï¿½ï¿½Z?TLTï¿½ï¿½ï¿½CKDoï¿½H?ï¿½ï¿½tï¿½&ï¿½(ï¿½
+(?¿½?¿½s>>O?¿½A?¿½?¿½?¿½?¿½0?¿½u?¿½?¿½8?¿½?¿½?¿½?¿½Z?TLT?¿½?¿½?¿½CKDo?¿½H??¿½?¿½t?¿½&?¿½(?¿½
 Third Option
 #TODO: Learn what "" is
 #TODO: Learn what "&" is
 
-Each option is always enclosed with "ï¿½sï¿½t" for aesthetic.
+Each option is always enclosed with "?¿½s?¿½t" for aesthetic.
