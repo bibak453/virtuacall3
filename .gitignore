@@ -1,0 +1,6 @@
+
+moeTL_VC3/GlobalSuppressions.cs
+/moeTL_VC3/bin
+/moeTL_VC3/obj
+/moeTL_VC3/.vs
+*.MES
