@@ -1,26 +1,24 @@
 ﻿using System.Text;
-
+using DiscUtils.Iso9660;
 
 namespace moeTL_VC3
 {
     internal class Program
     {
-#pragma warning disable CS8618
-        static string appPath;
-#pragma warning restore CS8618
-        //
+        public static string AppPath { get; set; } = @"C:\temp";
+
         static int Main()
         {
-            appPath = AppDomain.CurrentDomain.BaseDirectory;
+            AppPath = AppDomain.CurrentDomain.BaseDirectory;
             
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             bool loop = true;
 
-            while (loop == true)
+            while (loop)
             {
                 string input;
-                int option;
+                int output;
                 int exec;
 
                 do
@@ -31,13 +29,16 @@ namespace moeTL_VC3
                     Console.WriteLine("3. Convert folder to RPY");
                     Console.WriteLine("4. Convert CSV to folder");
                     Console.WriteLine("5. Pack folder to MES.VFS");
-                    Console.WriteLine("6. Leave (?_?;)");
+                    Console.WriteLine("6. Analyze Characters");
+                    Console.WriteLine("7. Leave (?_?;)");
 
                     input = GetInput("Please choose an option (oĂ‚Â´Ă˘â€“Ëť`o) :");
 
-                } while (!int.TryParse(input, out option) || option < 1 || option > 6);
+                } while (!int.TryParse(input, out output) || output < 1 || output > 7);
 
-                switch (option)
+                Console.Clear();
+
+                switch (output)
                 {
                     case 1:
                         exec = Extract();
@@ -54,6 +55,11 @@ namespace moeTL_VC3
                         break;
 
                     case 6:
+                        exec = Analyze();
+                        CompletionMessage(exec == 0, 3);
+                        break;
+
+                    case 7:
                         WriteMessage("Bye-bye, Senpai! Take care! (Ă‚Â´?ËťË?? Ä?? ??ËťË‡`) ?");
                         loop = false;
                         break;
@@ -69,26 +75,102 @@ namespace moeTL_VC3
 
             return 0;
         }
-        //
+        
         static string GetInput(string prompt)
         {
             Console.Write($"\n{prompt}");
-#pragma warning disable CS8603 // MoĹĽliwe zwrĂłcenie odwoĹ‚ania o wartoĹ›ci null.
-            return Console.ReadLine();
-#pragma warning restore CS8603 // MoĹĽliwe zwrĂłcenie odwoĹ‚ania o wartoĹ›ci null.
+            string output = Console.ReadLine();
+
+            if (string.IsNullOrEmpty(output))
+                return "";
+
+            return output;
         }
-        //
+
+        static string GetFolder()
+        {
+            string[] SubDirectories = Directory.GetDirectories(AppPath);
+            string TargetDirectory;
+
+            if (SubDirectories.Length <= 0)
+            {
+                WriteMessage("There are no folders to work on Senpai :(");
+                return "";
+            }
+
+            string input;
+            int output;
+
+            do
+            {
+                WriteMessage("Directories:");
+
+                for (int i = 0; i < SubDirectories.Length; i++)
+                {
+                    Console.WriteLine($"[{i + 1}]\t{SubDirectories[i]}");
+                }
+
+                input = GetInput("Pick a folder: ");
+
+                Console.Clear();
+
+            } while (!int.TryParse(input, out output) || output < 1 || output > SubDirectories.Length);
+
+            TargetDirectory = SubDirectories[output - 1];
+
+            WriteMessage($"You picked:\t{TargetDirectory}");
+
+            return TargetDirectory;
+        }
+
+        static string[] GetOriginalOrder()
+        {
+            try
+            {
+                string[] Files = File.ReadAllLines(Path.Combine(AppPath, "originalOrder.txt"));
+                return Files;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error reading the file: " + ex.Message);
+                return [];
+            }
+        }
+
         static void WriteMessage(string prompt)
         {
             Console.WriteLine($"\n{prompt}\n");
         }
-        //
-        static void CompletionMessage(bool positive, int action)
+
+        static void WriteIso()
+        {
+            string FolderPath = Path.Combine(AppPath, "MOD");
+            string[] Files = Directory.GetFiles(FolderPath);
+
+            CDBuilder ISO = new CDBuilder
+            {
+                UseJoliet = true,
+                VolumeIdentifier = "MES"
+            };
+
+            foreach (string file in Files)
+            {
+                byte[] fileBytes = File.ReadAllBytes(file);
+                string fileName = Path.GetFileName(file);
+                ISO.AddFile(fileName, fileBytes);
+            }
+
+            ISO.Build(Path.Combine(AppPath, "MES.ISO"));
+        }
+
+
+    static void CompletionMessage(bool positive, int action)
         {
             string[] actions = [
                 "Extraction",
                 "Converting",
-                "Packing"
+                "Packing",
+                "Analyzing"
             ];
 
             if (positive)
@@ -96,108 +178,102 @@ namespace moeTL_VC3
             else
                 WriteMessage($"Noooo! Something went wrong with {actions[action].ToLower()} Senpai. (T_T)");
         }
-        //
+
         static int Extract()
         {
-            string fileName = GetInput("\n\nPlease enter the name of the file ?\nDefault is \"MES.VFS\": ");
+            string File = GetInput("\n\nPlease enter the name of the file ?\nDefault is \"MES.VFS\": ");
             
-            if (fileName == "")
-                fileName = "MES.VFS";
+            if (File == "")
+                File = "MES.VFS";
 
-            string packPath = Path.Combine(appPath, fileName);
+            string FilePath = Path.Combine(AppPath, File);
 
-            byte[] data;
-            int maxOffset;
-
-            if (!File.Exists(packPath))
+            if (!System.IO.File.Exists(FilePath))
             {
                 WriteMessage("The file could not be found, Senpai. (T_T)");
                 return 1;
             }
 
-            using (FileStream fileStream = new(packPath, FileMode.Open, FileAccess.Read))
-            {
-                using (BinaryReader reader = new(fileStream))
-                {
-                    maxOffset = (int)fileStream.Length;
-                    data = reader.ReadBytes(maxOffset);
-                }
-            }
+            byte[] Data = System.IO.File.ReadAllBytes(FilePath);
+            int MaxOffset = Data.Length;
 
-            int signature = ReadInt16(data, 0);
-            int version = ReadInt16(data, 2);
-            int count = ReadInt16(data, 4);
-            int entrySize = ReadInt16(data, 6);
-            int indexSize = ReadInt32(data, 8);
+            int Signature   =   ReadInt16(Data, 0);
+            int Version     =   ReadInt16(Data, 2);
+            int FileCount   =   ReadInt16(Data, 4);
+            int EntrySize   =   ReadInt16(Data, 6);
+            int IndexSize   =   ReadInt32(Data, 8);
 
-            if (0x4656 != signature && 0x4C56 != signature)
+            if (0x4656 != Signature && 0x4C56 != Signature)
             {
                 WriteMessage("Invalid file signature, Senpai. (>.<)");
                 return 1;
             }
 
-            if (version >= 0x0200)
+            if (Version >= 0x0200)
+            {
                 WriteMessage("Senpai, The version is higher than expected. Need to use other method (not implemented) (>.<)");
+                return 1;
+            }
 
-            if (!IsSaneCount(count))
+            if (!IsSaneCount(FileCount))
             {
                 WriteMessage("Invalid count. Please, double-check, Senpai! (?_?;)");
                 return 1;
             }
 
-            if (entrySize <= 0 || indexSize <= 0 || maxOffset != ReadUInt32(data, 0xC))
+            if (EntrySize <= 0 || IndexSize <= 0 || MaxOffset != ReadUInt32(Data, 0xC))
             {
                 WriteMessage("Invalid file size or entry size, Senpai. (T_T)");
                 return 1;
             }
 
-            string extractDir = packPath + "~";
+            string TargetPath = Path.Combine(AppPath, Path.GetFileName(FilePath) + "~");
 
-            if (Directory.Exists(extractDir))
+            if (Directory.Exists(TargetPath))
             {
-                int folderNumber = 1;
-                string folderName;
+                int iter = 1;
+                string tempName;
 
                 do
                 {
-                    folderName = $"{extractDir}{folderNumber:D3}";
-                    folderNumber++;
-                } while (Directory.Exists(folderName));
+                    tempName = $"{TargetPath}{iter:D3}";
+                    iter++;
+                } while (Directory.Exists(tempName));
 
-                extractDir = folderName;
+                TargetPath = tempName;
             }
 
-            Directory.CreateDirectory(extractDir);
+            Directory.CreateDirectory(TargetPath);
 
             List<FileEntry> fileList = new List<FileEntry>();
-            int indexOffset = 0x10;
+            int IndexOffset = 0x10;
 
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < FileCount; i++)
             {
-                if (ReadUInt32(data, indexOffset + 0x13) > 0)
+                if (ReadUInt32(Data, IndexOffset + 0x13) > 0)
                 {
                     var entry = new FileEntry(
-                        ReadString(data, indexOffset, 0x13, i),
-                        ReadUInt32(data, indexOffset + 0x13),
-                        ReadUInt32(data, indexOffset + 0x17),
-                        ReadUInt32(data, indexOffset + 0x1B),
-                        data,
-                        0x01 != ReadByte(data, indexOffset + 0x1F)
+                        ReadString(Data, IndexOffset, 0x13, i),
+                        ReadUInt32(Data, IndexOffset + 0x13),
+                        ReadUInt32(Data, IndexOffset + 0x17),
+                        ReadUInt32(Data, IndexOffset + 0x1B),
+                        Data,
+                        0x01 != ReadByte(Data, IndexOffset + 0x1F)
                     );
 
                     fileList.Add(entry);
                 }
 
-                indexOffset += entrySize;
+                IndexOffset += EntrySize;
             }
 
             foreach (var entry in fileList)
             {
-                string filePath = Path.Combine(extractDir, entry.Name);
+                string filePath = Path.Combine(TargetPath, entry.Name);
 
                 try
                 {
-                    using (FileStream fs = File.Create(filePath))
+                    using (FileStream fs = new FileStream(filePath, FileMode.Create))
                     {
                         fs.Write(entry.Data, 0, entry.Data.Length);
                     }
@@ -210,26 +286,60 @@ namespace moeTL_VC3
                 Console.WriteLine($"Senpai! (ç«•ď˝§?ç«•ď˝¦) It's extracted: {entry.Name}");
             }
 
-
+            try
+            {
+                using (FileStream fs = System.IO.File.Create(Path.Combine(AppPath, "originalOrder.txt")))
+                {
+                    foreach (var entry in fileList)
+                    {
+                        fs.Write(Encoding.GetEncoding("shift-jis").GetBytes($"{entry.Name}\n"));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteMessage($"Failed to write the file '': {ex.Message}, Senpai. (T_T)");
+            }
+            
             return 0;
         }
-        //
+        
         static int Pack()
         {
-            string WorkingDirectory = GetFolder();
+            string TargetFolder = GetFolder();
 
-            if (WorkingDirectory == "")
+            if (TargetFolder == "")
+            { 
+                WriteMessage("Senpai, you didn't pick anythin :(");
                 return 1;
-
-            string[] files = Directory.GetFiles(WorkingDirectory);
+            }
 
             List<FileEntry> fileList = new List<FileEntry>();
+            string[] files = GetOriginalOrder();
+
+            byte[] header = File.ReadAllBytes(Path.Combine(AppPath, "header.BIN"));
+            byte[] scenarioData = [];
+            
+            uint fileOffset = 0;
 
             foreach (string file in files)
             {
-                byte[] fileData = File.ReadAllBytes(file);
+                byte[] fileData = File.ReadAllBytes(Path.Combine(TargetFolder, file));
 
-                var entry = new FileEntry(
+                if (file == "V_OP01.MES")
+                {
+                    FileHandler fileHandler = new FileHandler();
+                    string insertLine = fileHandler.ReadAndDeleteFirstLine(Path.Combine(AppPath, "tempLines.txt"));
+
+                    string original = Encoding.GetEncoding("shift-jis").GetString(fileData);
+
+                    original.Replace("XOXOXOXO", insertLine);
+
+                    fileData = Encoding.GetEncoding("shift-jis").GetBytes(original);
+
+                }
+
+                FileEntry entry = new FileEntry(
                     Path.GetFileName(file),
                     0,
                     (uint)fileData.Length,
@@ -237,64 +347,166 @@ namespace moeTL_VC3
                     fileData,
                     false
                 );
+                entry.Offset = fileOffset;
 
                 fileList.Add(entry);
+
+                fileOffset += (uint)entry.Data.Length;
+                scenarioData = AddBytes(scenarioData, fileData);
             }
 
-            fileList = fileList.OrderBy(fe => fe.Name).ToList();
-
             int entrySize = 32;
+            int entryOffset = 0x10;
             int indexSize = entrySize * fileList.Count;
 
-            using (FileStream destStream = new("MES_MOD.VFS", FileMode.Create, FileAccess.Write))
+            using (FileStream destStream = new FileStream(Path.Combine(AppPath, "MOD", $"MES_{DateTime.Now.ToString("HHmmss")}.VFS"), FileMode.Create, FileAccess.Write))
             {
-                using (BinaryWriter writer = new(destStream))
+                using (BinaryWriter writer = new BinaryWriter(destStream))
                 {
+                    // Write header
                     writer.Write((short)0x4656);
                     writer.Write((short)0x100);
                     writer.Write((short)fileList.Count);
                     writer.Write((short)entrySize);
                     writer.Write(indexSize);
 
+                    writer.Write((byte)0x31);
+                    writer.Write((byte)0xB6);
+                    writer.Write((byte)0x3B);
+                    writer.Write((byte)0x00);
+
+                    // Write list
+                    writer.Write(header);
+
+                    // Get current position
+                    long scenarioPosition = writer.BaseStream.Position;
+
+                    //Write scenario
+                    writer.Write(scenarioData);
+                    writer.Seek(entryOffset, SeekOrigin.Begin);
+
+                    // Modify the List data
                     foreach (FileEntry entry in fileList)
                     {
-                        entry.Offset = (uint)destStream.Position;
-                        writer.Write(Encoding.GetEncoding("shift-jis").GetBytes(entry.Name.PadRight(19, '\0')));
+                        entry.Offset += (uint)scenarioPosition;
+
+                        writer.Seek(entryOffset + 0x13, SeekOrigin.Begin);
+
                         writer.Write(entry.Offset);
                         writer.Write(entry.Size);
-                        writer.Write(entry.UnpackedSize);
-                        writer.Write(entry.IsPacked ? (byte)1 : (byte)0);
+
+                        entryOffset += entrySize;
                     }
-                    foreach (FileEntry entry in fileList)
-                    {
-                        writer.Write(entry.Data);
-                    }
+                    long totalFileSize = destStream.Length;
+
+                    // Seek to position 0xC from the beginning of the file
+                    destStream.Seek(0xC, SeekOrigin.Begin);
+
+                    // Write the total file size as a uint32 value
+                    writer.Write((uint)totalFileSize);
                 }
+            }
+
+            WriteIso();
+
+            return 0;
+        }
+
+        static int Analyze()
+        {
+            string TargetPath = GetFolder();
+
+            if (string.IsNullOrEmpty(TargetPath))
+            {
+                return 1;
+            }
+
+            HashSet<char> uniqueCharacters = new HashSet<char>();
+            HashSet<char> excludedCharacters = new HashSet<char>();
+
+            string Done = File.ReadAllText(Path.Combine(AppPath, "DoneCharacters.txt"), Encoding.GetEncoding("shift-jis"));
+            Console.WriteLine(Done);
+            foreach (char character in Done)
+            {
+                if (!excludedCharacters.Contains(character))
+                {
+                    excludedCharacters.Add(character);
+                }
+            }
+
+            try
+            {
+                if (Directory.Exists(TargetPath))
+                {
+                    string[] files = Directory.GetFiles(TargetPath);
+
+                    foreach (string file in files)
+                    {
+                        string content = File.ReadAllText(file, Encoding.GetEncoding("shift-jis"));
+
+                        foreach (char c in content)
+                        {
+                            if (!excludedCharacters.Contains(c) && !uniqueCharacters.Contains(c))
+                            {
+                                uniqueCharacters.Add(c);
+                            }
+                        }
+                    }
+
+                    List<char> sortedList = uniqueCharacters.ToList();
+
+                    sortedList.Sort();
+
+                    string output = "";
+                    int counter = 0;
+                    foreach(char c in sortedList)
+                    {
+
+                        output += c;
+                        output += "　";
+                        if (counter > 56)
+                        {
+                            output += "ｺ\n";
+                            counter = 0;
+                            output +="(#";
+                        }
+                        counter++;
+                    }
+
+                    File.WriteAllBytes(Path.Combine(AppPath, "UniqueCharacters.txt"), Encoding.GetEncoding("shift-jis").GetBytes(output));
+                }
+                else
+                {
+                    WriteMessage("Senpai! Did you delete it on purpose? :(");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
             }
 
             return 0;
         }
-        //
+
         static int ConvertCSV()
         {
-            string folderPath = GetFolder();
+            string TargetDirectory = GetFolder();
 
-            if (folderPath == "")
+            if (TargetDirectory == "")
                 return 1;
 
             try
             {
-                // Create a new folder name by adding "_regex" suffix
-                string newFolderPath = Path.Combine(Path.GetDirectoryName(folderPath), Path.GetFileName(folderPath) + "_regex");
-                Directory.CreateDirectory(newFolderPath);
+                string newTargetDirectory = Path.Combine(AppPath, Path.GetDirectoryName(TargetDirectory), "_regex");
 
-                // Process each file in the folder
-                string[] files = Directory.GetFiles(folderPath);
-                foreach (string filePath in files)
+                Directory.CreateDirectory(newTargetDirectory);
+
+                string[] Files = Directory.GetFiles(TargetDirectory);
+
+                foreach (string File in Files)
                 {
-                    string fileName = Path.GetFileName(filePath);
-                    string newFilePath = Path.Combine(newFolderPath, fileName);
-                    RewriteFile(filePath, newFilePath);
+                    RewriteFile(Path.GetFileName(File), Path.Combine(newTargetDirectory, Path.GetFileName(File)));
                 }
 
                 Console.WriteLine("Regex matches extracted and saved to files in the new folder.");
@@ -304,35 +516,20 @@ namespace moeTL_VC3
                 Console.WriteLine("Error: " + ex.Message);
             }
 
-
             return 0;
         }
-
-        static void RewriteFile(string inputFilePath, string outputFilePath)
+        
+        static void RewriteFile(string InputFile, string OutputFile)
         {
             try
             {
-                // Read the Shift-JIS encoded file
-                string content;
-                using (StreamReader reader = new StreamReader(inputFilePath, Encoding.GetEncoding("shift_jis")))
-                {
-                    content = reader.ReadToEnd();
-                }
+                string ScenarioFile = File.ReadAllText(InputFile, Encoding.GetEncoding("shift-jis"));
+                
+                ScenarioFile = ScenarioFile.Replace("\n", "");
+                ScenarioFile = ScenarioFile.Replace("(", "\n(");
+                //Text = Decrypt(Text);
 
-
-                // Replace original new lines with spaces
-                content = content.Replace("\n", " ");
-
-                // Insert new line before "("
-                content = content.Replace("(", "\n(");
-
-                content = Decrypt(content);
-
-                // Write the modified content to the new file
-                using (StreamWriter writer = new StreamWriter(outputFilePath, false, Encoding.GetEncoding("shift_jis")))
-                {
-                    writer.Write(content);
-                }
+                File.WriteAllText(OutputFile, ScenarioFile, Encoding.GetEncoding("shift_jis"));
             }
             catch (Exception e)
             {
@@ -348,7 +545,7 @@ namespace moeTL_VC3
             ];
 
             string decrypted = input;
-
+            // TODO: Add a check so it will convert only dialogue
             foreach (CharacterMap ch in ReplaceMap)
             {
                 decrypted = decrypted.Replace(ch.A, ch.B);
@@ -357,76 +554,11 @@ namespace moeTL_VC3
             return decrypted;
         }
 
-
-        //
-        static string GetFolder()
-        {
-            string[] subDirectories = Directory.GetDirectories(appPath);
-            string WorkingDirectory;
-
-            if (subDirectories.Length <= 0)
-            {
-                WriteMessage("There are no folders to work on Senpai :(");
-                return "";
-            }
-
-            WriteMessage("Directories:");
-
-            for (int i = 0; i < subDirectories.Length; i++)
-            {
-                Console.WriteLine($"[{i + 1}]\t{subDirectories[i]}");
-            }
-
-            while (true)
-            {
-                string console_input = GetInput("Pick a folder:");
-
-                if (int.TryParse(console_input, out int input))
-                {
-                    if (input >= 1 && input <= subDirectories.Length)
-                    {
-                        WorkingDirectory = subDirectories[input - 1];
-                        break;
-                    }
-                    else
-                        WriteMessage($"Senpai please enter a number between 1 and {subDirectories.Length} ^.^");
-                }
-                else
-                    WriteMessage("Please, try again Senpai :(");
-            }
-
-            WriteMessage($"You picked:\t{WorkingDirectory}");
-
-            return WorkingDirectory;
-        }
-
-
-        // Byte functions
         public static bool IsSaneCount(int count)
         {
             return count > 0 && count < 0x40000;
         }
-
-        public static byte ReadByte(byte[] data, int offset)
-        {
-            return data[offset];
-        }
-
-        public static short ReadInt16(byte[] data, int offset)
-        {
-            return BitConverter.ToInt16(data, offset);
-        }
-
-        public static uint ReadUInt32(byte[] data, int offset)
-        {
-            return BitConverter.ToUInt32(data, offset);
-        }
-
-        public static int ReadInt32(byte[] data, int offset)
-        {
-            return BitConverter.ToInt32(data, offset);
-        }
-
+        
         static string ReadString(byte[] byteArray, int offset, int size, int count)
         {
             try
@@ -447,6 +579,40 @@ namespace moeTL_VC3
             }
 
             return $"{count:D3}.MES";
+        }
+
+        static byte[] AddBytes(byte[] originalArray, byte[] bytesToAdd)
+        {
+            int originalLength = originalArray.Length;
+            int bytesToAddLength = bytesToAdd.Length;
+            int newSize = originalLength + bytesToAddLength;
+
+            byte[] newArray = new byte[newSize];
+
+            Array.Copy(originalArray, newArray, originalLength);
+            Array.Copy(bytesToAdd, 0, newArray, originalLength, bytesToAddLength);
+
+            return newArray;
+        }
+
+        public static byte ReadByte(byte[] data, int offset)
+        {
+            return data[offset];
+        }
+
+        public static short ReadInt16(byte[] data, int offset)
+        {
+            return BitConverter.ToInt16(data, offset);
+        }
+
+        public static uint ReadUInt32(byte[] data, int offset)
+        {
+            return BitConverter.ToUInt32(data, offset);
+        }
+
+        public static int ReadInt32(byte[] data, int offset)
+        {
+            return BitConverter.ToInt32(data, offset);
         }
     }
 }
