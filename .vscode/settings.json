@@ -1,0 +1,20 @@
+{
+    // The following will hide the js and map files in the editor
+    "files.exclude": {
+        "**/*.js": true,
+        "**/*.map": true,
+        ".gitignore":true,
+        "moeTL_VC3/.vs":true,
+        "moeTL_VC3/moeTL_VC3.sln": true,
+        "moeTL_VC3/moeTL_VC3.csproj": true,
+        "moeTL_VC3/.editorconfig":true,
+        "moeTL_VC3/obj":true,
+        "moeTL_VC3/bin/Debug/net8.0/*.dll":true,
+        "moeTL_VC3/bin/Debug/net8.0/*.exe":true,
+        "moeTL_VC3/bin/Debug/net8.0/*.json":true,
+        "moeTL_VC3/bin/Debug/net8.0/*.pdb":true,
+        "moeTL_VC3/bin/Debug/net8.0/runtimes":true
+
+
+    }
+}

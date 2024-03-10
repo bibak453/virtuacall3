@@ -1,0 +1,25 @@
+﻿[*.cs]
+
+# CS8604: Możliwy argument odwołania o wartości null.
+dotnet_diagnostic.CS8604.severity = none
+
+# IDE0063: Użyj prostej instrukcji „using”
+dotnet_diagnostic.IDE0063.severity = none
+
+# IDE0090: Użyj operatora „new(...)”
+dotnet_diagnostic.IDE0090.severity = none
+
+# CS8600: Konwertowanie literału null lub możliwej wartości null na nienullowalny typ.
+dotnet_diagnostic.CS8600.severity = none
+
+# IDE0028: Uprość inicjowanie kolekcji
+dotnet_diagnostic.IDE0028.severity = none
+
+# CA1868: Niepotrzebne wywołanie elementu „Contains(item)”
+dotnet_diagnostic.CA1868.severity = none
+
+# IDE0017: Uprość inicjowanie obiektów
+dotnet_diagnostic.IDE0017.severity = none
+
+# IDE0305: Uprość inicjowanie kolekcji
+dotnet_diagnostic.IDE0305.severity = none
