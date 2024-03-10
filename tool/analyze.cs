@@ -131,62 +131,6 @@ class Program
 }
 
 
-    static string GetFolder()
-    {
-        string WorkingDirectory = "";
-        string[] subDirectories = Directory.GetDirectories(appPath);
-
-        if (subDirectories.Length <= 0)
-        {
-            WriteMessage("There are no folders to work on Senpai :(");
-            return "";
-        }
-
-        WriteMessage("Directories:");
-
-        for (int i = 0; i < subDirectories.Length; i++)
-        {
-            Console.WriteLine($"[{i + 1}]\t{subDirectories[i]}");
-        }
-
-        while (true)
-        {
-            string console_input = GetInput("Pick a folder:");
-            int input = -1;
-
-            if (int.TryParse(console_input, out input))
-            {
-                if (input >= 1 && input <= subDirectories.Length)
-                {
-                    WorkingDirectory = subDirectories[input - 1];
-                    break;
-                }
-                else
-                    WriteMessage($"Senpai please enter a number between 1 and {subDirectories.Length} ^.^");
-            }
-            else
-                WriteMessage("Please, try again Senpai :(");
-        }
-
-        WriteMessage($"You picked:\t{WorkingDirectory}");
-
-        return WorkingDirectory;
-    }
-
-
-    // A helper function to get and diplay question and terminal input
-    static string GetInput(string prompt)
-    {
-        Console.Write($"\n{prompt}");
-        return Console.ReadLine();
-    }
-
-    // It writes a message to the terminal with padding (\n on the start and end)
-    static void WriteMessage(string msg)
-    {
-        Console.WriteLine($"\n{msg}\n");
-    }
-
     static HashSet<char> ReadBlacklistCharacters(string blacklistFilePath)
     {
         HashSet<char> excludedCharacters = new HashSet<char>();
